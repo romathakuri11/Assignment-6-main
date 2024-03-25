@@ -41,18 +41,18 @@ module.exports.getAllStudents = function () {
     })
 }
 
-module.exports.getTAs = function () {
-    return new Promise((resolve, reject) => {
-        const filteredStudents = dataCollection.students.filter(student => student.TA === true);
+// module.exports.getTAs = function () {
+//     return new Promise((resolve, reject) => {
+//         const filteredStudents = dataCollection.students.filter(student => student.TA === true);
 
-        if (filteredStudents.length == 0) {
-            reject("Query returned 0 results");
-            return;
-        }
+//         if (filteredStudents.length == 0) {
+//             reject("Query returned 0 results");
+//             return;
+//         }
 
-        resolve(filteredStudents);
-    });
-};
+//         resolve(filteredStudents);
+//     });
+// };
 
 module.exports.getCourses = function () {
     return new Promise((resolve, reject) => {
@@ -75,6 +75,48 @@ module.exports.getStudentByNum = function (num) {
         }
 
         resolve(foundStudent);
+    });
+};
+
+module.exports.updateStudent = function (studentData) {
+    console.log("here is the studentData: ", studentData)
+    return new Promise((resolve, reject) => {
+        const index = dataCollection.students.findIndex(student => student.studentNum == Number(studentData.studentNum));
+        if(studentData.TA == undefined || studentData.TA == null)
+        {
+            studentData.TA = false;
+        }
+        else
+        {
+            studentData.TA = true
+        }
+        studentData.course = Number(studentData.course)
+        studentData.studentNum = Number(studentData.studentNum) 
+        if (index !== -1) {
+            
+            console.log("here is the last updated studentData: ", studentData)
+            dataCollection.students[index] = studentData;
+        }
+        else{
+            reject("No student found with the given number");
+            return;
+        }
+
+        resolve();
+    });
+};
+
+module.exports.getCourseById = function (id) {
+    return new Promise((resolve, reject) => {
+        console.log("here is the courses list", dataCollection.courses)
+        const course = dataCollection.courses.find(course => course.courseId == id);
+        console.log("here is the desired course", course)
+        if (!course) {
+            reject("query returned 0 results");
+            return;
+        }
+
+        resolve(course);
     });
 };
 
